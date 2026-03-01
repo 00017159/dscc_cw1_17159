@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tasks - TaskHub</title>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a> | <a href="/tasks/">Tasks</a> |
+      <a href="/accounts/login/">Login</a> |
+      <a href="/accounts/register/">Register</a>
+    </nav>
+    <hr />
+
+    <h1>Tasks</h1>
+
+    <p>
+      <a href="/tasks/create/">+ Create Task</a>
+    </p>
+
+    <ul>
+      {% for t in tasks %}
+      <li>
+        <a href="/tasks/{{ t.id }}/">{{ t.title }}</a>
+        — {{ t.status }} — Project: {{ t.project.name }}
+      </li>
+      {% empty %}
+      <li>No tasks yet.</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

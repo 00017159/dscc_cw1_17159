@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Task Detail - TaskHub</title>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a> |
+      <a href="/tasks/">Back to Tasks</a>
+    </nav>
+    <hr />
+
+    <h1>{{ task.title }}</h1>
+
+    <p><strong>Status:</strong> {{ task.status }}</p>
+    <p><strong>Project:</strong> {{ task.project.name }}</p>
+    <p>
+      <strong>Assigned to:</strong>
+      {% if task.assigned_to %}{{ task.assigned_to.username }}{% else %}-{%
+      endif %}
+    </p>
+
+    <p><strong>Description:</strong> {{ task.description|default:"-" }}</p>
+
+    <p>
+      <strong>Tags:</strong>
+      {% for tag in task.tags.all %} {{ tag.name }}{% if not forloop.last %}, {%
+      endif %} {% empty %} - {% endfor %}
+    </p>
+
+    <p>
+      <a href="/tasks/{{ task.id }}/edit/">Edit</a> |
+      <a href="/tasks/{{ task.id }}/delete/">Delete</a>
+    </p>
+  </body>
+</html>
