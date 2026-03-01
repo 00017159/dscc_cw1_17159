@@ -1,8 +1,36 @@
-{% extends "base.html" %} {% block title %}Register{% endblock %} {% block
-content %}
-<h1>Register</h1>
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit">Create account</button>
-</form>
-{% endblock %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Register - TaskHub</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/tasks/">Tasks</a>
+      <a href="/projects/">Projects</a>
+
+      <span class="nav-right">
+        {% if user.is_authenticated %}
+        <span class="muted">Hi, {{ user.username }}</span>
+        <a href="/accounts/logout/">Logout</a>
+        {% else %}
+        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/register/">Register</a>
+        {% endif %}
+      </span>
+    </nav>
+
+    <div class="container">
+      <h1>Register</h1>
+
+      <div class="card">
+        <form method="post">
+          {% csrf_token %} {{ form.as_p }}
+          <button class="btn" type="submit">Create account</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

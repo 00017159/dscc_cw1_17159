@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Tasks - TaskHub</title>
+    <title>Projects - TaskHub</title>
     <link rel="stylesheet" href="/static/css/styles.css" />
   </head>
   <body>
@@ -23,25 +23,18 @@
     </nav>
 
     <div class="container">
-      <h1>Tasks</h1>
-
-      {% if user.is_authenticated %}
-      <p><a class="btn" href="/tasks/create/">+ Create Task</a></p>
-      {% else %}
-      <p class="muted">Login to create/edit tasks.</p>
-      {% endif %}
+      <h1>Projects</h1>
 
       <div class="card">
         <ul>
-          {% for t in tasks %}
+          {% for p in projects %}
           <li>
-            <a href="/tasks/{{ t.id }}/">{{ t.title }}</a>
-            <span class="muted"
-              >— {{ t.status }} — Project: {{ t.project.name }}</span
-            >
+            <strong>{{ p.name }}</strong>
+            <span class="muted">— owner: {{ p.owner.username }}</span>
+            <span class="muted">— tasks: {{ p.tasks.count }}</span>
           </li>
           {% empty %}
-          <li>No tasks yet.</li>
+          <li>No projects yet.</li>
           {% endfor %}
         </ul>
       </div>

@@ -3,19 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <title>Task Form - TaskHub</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
   </head>
   <body>
-    <nav>
-      <a href="/">Home</a> |
+    <nav class="nav">
+      <a href="/">Home</a>
       <a href="/tasks/">Tasks</a>
+      <a href="/projects/">Projects</a>
+
+      <span class="nav-right">
+        {% if user.is_authenticated %}
+        <span class="muted">Hi, {{ user.username }}</span>
+        <a href="/accounts/logout/">Logout</a>
+        {% else %}
+        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/register/">Register</a>
+        {% endif %}
+      </span>
     </nav>
-    <hr />
 
-    <h1>{% if object %}Edit{% else %}Create{% endif %} Task</h1>
+    <div class="container">
+      <h1>{% if object %}Edit{% else %}Create{% endif %} Task</h1>
 
-    <form method="post">
-      {% csrf_token %} {{ form.as_p }}
-      <button type="submit">Save</button>
-    </form>
+      <div class="card">
+        <form method="post">
+          {% csrf_token %} {{ form.as_p }}
+          <button class="btn" type="submit">Save</button>
+          <a class="btn" href="/tasks/">Cancel</a>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

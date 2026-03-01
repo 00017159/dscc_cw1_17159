@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Delete Task - TaskHub</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/tasks/">Tasks</a>
+      <a href="/projects/">Projects</a>
+
+      <span class="nav-right">
+        {% if user.is_authenticated %}
+        <span class="muted">Hi, {{ user.username }}</span>
+        <a href="/accounts/logout/">Logout</a>
+        {% else %}
+        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/register/">Register</a>
+        {% endif %}
+      </span>
+    </nav>
+
+    <div class="container">
+      <h1>Delete Task</h1>
+
+      <div class="card">
+        <p>
+          Are you sure you want to delete: <strong>{{ object.title }}</strong>?
+        </p>
+
+        <form method="post">
+          {% csrf_token %}
+          <button class="btn danger" type="submit">Yes, delete</button>
+          <a class="btn" href="/tasks/">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -3,35 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <title>Task Detail - TaskHub</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
   </head>
   <body>
-    <nav>
-      <a href="/">Home</a> |
-      <a href="/tasks/">Back to Tasks</a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/tasks/">Tasks</a>
+      <a href="/projects/">Projects</a>
+
+      <span class="nav-right">
+        {% if user.is_authenticated %}
+        <span class="muted">Hi, {{ user.username }}</span>
+        <a href="/accounts/logout/">Logout</a>
+        {% else %}
+        <a href="/accounts/login/">Login</a>
+        <a href="/accounts/register/">Register</a>
+        {% endif %}
+      </span>
     </nav>
-    <hr />
 
-    <h1>{{ task.title }}</h1>
+    <div class="container">
+      <h1>{{ task.title }}</h1>
 
-    <p><strong>Status:</strong> {{ task.status }}</p>
-    <p><strong>Project:</strong> {{ task.project.name }}</p>
-    <p>
-      <strong>Assigned to:</strong>
-      {% if task.assigned_to %}{{ task.assigned_to.username }}{% else %}-{%
-      endif %}
-    </p>
+      <div class="card">
+        <p><strong>Status:</strong> {{ task.status }}</p>
+        <p><strong>Project:</strong> {{ task.project.name }}</p>
 
-    <p><strong>Description:</strong> {{ task.description|default:"-" }}</p>
+        <p>
+          <strong>Assigned to:</strong>
+          {% if task.assigned_to %} {{ task.assigned_to.username }} {% else %} -
+          {% endif %}
+        </p>
 
-    <p>
-      <strong>Tags:</strong>
-      {% for tag in task.tags.all %} {{ tag.name }}{% if not forloop.last %}, {%
-      endif %} {% empty %} - {% endfor %}
-    </p>
+        <p><strong>Description:</strong> {{ task.description|default:"-" }}</p>
 
-    <p>
-      <a href="/tasks/{{ task.id }}/edit/">Edit</a> |
-      <a href="/tasks/{{ task.id }}/delete/">Delete</a>
-    </p>
+        <p>
+          <strong>Tags:</strong>
+          {% for tag in task.tags.all %}
+          <span class="tag">{{ tag.name }}</span>
+          {% empty %} - {% endfor %}
+        </p>
+      </div>
+
+      <p class="actions">
+        <a class="btn" href="/tasks/{{ task.id }}/edit/">Edit</a>
+        <a class="btn danger" href="/tasks/{{ task.id }}/delete/">Delete</a>
+        <a class="btn" href="/tasks/">Back</a>
+      </p>
+    </div>
   </body>
 </html>
