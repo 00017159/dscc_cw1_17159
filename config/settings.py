@@ -31,7 +31,9 @@ SECRET_KEY = 'django-insecure-rl(hn7tjglxllj%6=3q5&su5xq&#gb#qa90uy_@wvrnsz)4-yd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env_config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
+
+CSRF_TRUSTED_ORIGINS = env_config("CSRF_TRUSTED_ORIGINS", default="").split(",") if env_config("CSRF_TRUSTED_ORIGINS", default="") else []
 
 
 # Application definition
@@ -136,3 +138,7 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/accounts/login/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
