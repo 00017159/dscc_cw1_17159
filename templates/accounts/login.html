@@ -1,9 +1,10 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Login - TaskHub</title>
-    <link rel="stylesheet" href="/static/css/styles.css" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <body>
     <nav class="nav">
@@ -28,8 +29,13 @@
       <div class="card">
         <form method="post">
           {% csrf_token %} {{ form.as_p }}
-          <button class="btn" type="submit">Login</button>
+          <button class="btn primary" type="submit">Login</button>
         </form>
+
+        <p class="muted">
+          No account? <a href="/accounts/register/">Register</a>
+        </p>
+        <p><a class="btn" href="/">Back to Home</a></p>
       </div>
     </div>
   </body>

@@ -8,11 +8,29 @@ from .models import Project, Task, Tag
 
 
 def home(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        project_count = Project.objects.count()
+        task_count = Task.objects.count()
+        tag_count = Tag.objects.count()
+        recent_tasks = Task.objects.order_by("-created_at")[:5]
+    elif request.user.is_authenticated:
+        user_projects = Project.objects.filter(owner=request.user)
+        user_tasks = Task.objects.filter(project__owner=request.user)
+        project_count = user_projects.count()
+        task_count = user_tasks.count()
+        tag_count = Tag.objects.filter(tasks__in=user_tasks).distinct().count()
+        recent_tasks = user_tasks.order_by("-created_at")[:5]
+    else:
+        project_count = 0
+        task_count = 0
+        tag_count = 0
+        recent_tasks = Task.objects.none()
+
     return render(request, "core/home.html", {
-        "project_count": Project.objects.count(),
-        "task_count": Task.objects.count(),
-        "tag_count": Tag.objects.count(),
-        "recent_tasks": Task.objects.order_by("-created_at")[:5],
+        "project_count": project_count,
+        "task_count": task_count,
+        "tag_count": tag_count,
+        "recent_tasks": recent_tasks,
     })
 
 
