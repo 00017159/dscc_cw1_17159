@@ -26,14 +26,14 @@ BASE_DIR  = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rl(hn7tjglxllj%6=3q5&su5xq&#gb#qa90uy_@wvrnsz)4-yd'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = env_config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
-CSRF_TRUSTED_ORIGINS = env_config("CSRF_TRUSTED_ORIGINS", default="").split(",") if env_config("CSRF_TRUSTED_ORIGINS", default="") else []
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="").split(",") if config("CSRF_TRUSTED_ORIGINS", default="") else []
 
 
 # Application definition
