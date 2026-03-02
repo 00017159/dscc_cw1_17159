@@ -1,17 +1,14 @@
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <title>Home - TaskHub</title>
+    <title>Delete Project</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
   <body>
     <nav class="nav">
-      <a href="/">Home</a>
-      <a href="/tasks/">Tasks</a>
       <a href="/projects/">Projects</a>
-
       <span class="nav-right">
         {% if user.is_authenticated %}
         <span class="muted">Hi, {{ user.username }}</span>
@@ -24,23 +21,14 @@
     </nav>
 
     <div class="container">
-      <h1>TaskHub Dashboard</h1>
-
+      <h1>Delete Project</h1>
       <div class="card">
-        <p>Projects: <strong>{{ project_count }}</strong></p>
-        <p>Tasks: <strong>{{ task_count }}</strong></p>
-        <p>Tags: <strong>{{ tag_count }}</strong></p>
-      </div>
-
-      <h2>Recent tasks</h2>
-      <div class="card">
-        <ul>
-          {% for t in recent_tasks %}
-          <li>{{ t.title }} <span class="muted">({{ t.status }})</span></li>
-          {% empty %}
-          <li>No tasks yet.</li>
-          {% endfor %}
-        </ul>
+        <p>Delete <strong>{{ object.name }}</strong>?</p>
+        <form method="post">
+          {% csrf_token %}
+          <button class="btn danger" type="submit">Yes, delete</button>
+          <a class="btn" href="/projects/">Cancel</a>
+        </form>
       </div>
     </div>
   </body>

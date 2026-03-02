@@ -1,9 +1,9 @@
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <title>Tasks - TaskHub</title>
+    <title>Project Detail</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
   <body>
@@ -11,7 +11,6 @@
       <a href="/">Home</a>
       <a href="/tasks/">Tasks</a>
       <a href="/projects/">Projects</a>
-
       <span class="nav-right">
         {% if user.is_authenticated %}
         <span class="muted">Hi, {{ user.username }}</span>
@@ -24,25 +23,32 @@
     </nav>
 
     <div class="container">
-      <h1>Tasks</h1>
+      <h1>{{ project.name }}</h1>
+      <p class="muted">Owner: {{ project.owner.username }}</p>
 
-      {% if user.is_authenticated %}
-      <p><a class="btn primary" href="/tasks/create/">+ Create Task</a></p>
-      {% else %}
-      <p class="muted">Login to create/edit tasks.</p>
-      {% endif %}
+      <p class="actions">
+        {% if user.is_authenticated %}
+        <a class="btn" href="/projects/{{ project.id }}/edit/">Edit</a>
+        <a class="btn danger" href="/projects/{{ project.id }}/delete/"
+          >Delete</a
+        >
+        <a class="btn primary" href="/tasks/create/?project={{ project.id }}"
+          >+ Add Task to this Project</a
+        >
+        {% endif %}
+        <a class="btn" href="/projects/">Back</a>
+      </p>
 
+      <h2>Tasks in this project</h2>
       <div class="card">
         <ul>
-          {% for t in tasks %}
+          {% for t in project.tasks.all %}
           <li>
             <a href="/tasks/{{ t.id }}/">{{ t.title }}</a>
-            <span class="muted"
-              >— {{ t.status }} — Project: {{ t.project.name }}</span
-            >
+            <span class="muted">— {{ t.status }}</span>
           </li>
           {% empty %}
-          <li>No tasks yet.</li>
+          <li>No tasks in this project yet.</li>
           {% endfor %}
         </ul>
       </div>

@@ -1,16 +1,16 @@
+{% load static %}
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <title>Projects - TaskHub</title>
-    <link rel="stylesheet" href="/static/css/styles.css" />
+    <title>Projects</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
   <body>
     <nav class="nav">
       <a href="/">Home</a>
       <a href="/tasks/">Tasks</a>
       <a href="/projects/">Projects</a>
-
       <span class="nav-right">
         {% if user.is_authenticated %}
         <span class="muted">Hi, {{ user.username }}</span>
@@ -25,12 +25,17 @@
     <div class="container">
       <h1>Projects</h1>
 
+      {% if user.is_authenticated %}
+      <p>
+        <a class="btn primary" href="/projects/create/">+ Create Project</a>
+      </p>
+      {% endif %}
+
       <div class="card">
         <ul>
           {% for p in projects %}
           <li>
-            <strong>{{ p.name }}</strong>
-            <span class="muted">— owner: {{ p.owner.username }}</span>
+            <a href="/projects/{{ p.id }}/"><strong>{{ p.name }}</strong></a>
             <span class="muted">— tasks: {{ p.tasks.count }}</span>
           </li>
           {% empty %}

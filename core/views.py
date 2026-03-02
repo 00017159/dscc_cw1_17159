@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
 
 from .models import Project, Task, Tag
 
@@ -34,6 +35,13 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     fields = ["project", "title", "description", "assigned_to", "tags", "status"]
     success_url = reverse_lazy("task_list")
 
+    def get_initial(self):
+        initial = super().get_initial()
+        project_id = self.request.GET.get("project")
+        if project_id:
+            initial["project"] = project_id
+        return initial
+
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
@@ -46,3 +54,39 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = "core/task_confirm_delete.html"
     success_url = reverse_lazy("task_list")
+
+class ProjectListView(ListView):
+    model = Project
+    template_name = "core/project_list.html"
+    context_object_name = "projects"
+    ordering = ["-created_at"]
+
+
+class ProjectDetailView(DetailView):
+    model = Project
+    template_name = "core/project_detail.html"
+    context_object_name = "project"
+
+
+class ProjectCreateView(LoginRequiredMixin, CreateView):
+    model = Project
+    template_name = "core/project_form.html"
+    fields = ["name"]
+    success_url = reverse_lazy("project_list")
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
+class ProjectUpdateView(LoginRequiredMixin, UpdateView):
+    model = Project
+    template_name = "core/project_form.html"
+    fields = ["name"]
+    success_url = reverse_lazy("project_list")
+
+
+class ProjectDeleteView(LoginRequiredMixin, DeleteView):
+    model = Project
+    template_name = "core/project_confirm_delete.html"
+    success_url = reverse_lazy("project_list")

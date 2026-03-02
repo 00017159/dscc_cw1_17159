@@ -1,9 +1,10 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Task Detail - TaskHub</title>
-    <link rel="stylesheet" href="/static/css/styles.css" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
   </head>
   <body>
     <nav class="nav">
@@ -46,8 +47,10 @@
       </div>
 
       <p class="actions">
+        {% if user.is_authenticated %}
         <a class="btn" href="/tasks/{{ task.id }}/edit/">Edit</a>
         <a class="btn danger" href="/tasks/{{ task.id }}/delete/">Delete</a>
+        {% endif %}
         <a class="btn" href="/tasks/">Back</a>
       </p>
     </div>
