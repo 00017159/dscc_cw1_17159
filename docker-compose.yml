@@ -11,16 +11,17 @@ services:
     networks:
       - appnet
 
-  web:
-    build: .
-    env_file: .env
-    depends_on:
-      - db
-    volumes:
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-    networks:
-      - appnet
+web:
+  image: shoh0804/dscc17159-web:latest
+  env_file: .env
+  depends_on:
+    - db
+  volumes:
+    - static_volume:/app/staticfiles
+    - media_volume:/app/media
+  networks:
+    - appnet
+  restart: unless-stopped
 
   nginx:
     image: nginx:alpine
