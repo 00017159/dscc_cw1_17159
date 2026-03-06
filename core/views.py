@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
 
 from .models import Project, Task, Tag
 
@@ -34,17 +35,29 @@ def home(request):
     })
 
 
-class TaskListView(ListView):
+class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = "core/task_list.html"
     context_object_name = "tasks"
     ordering = ["-created_at"]
 
+    def get_queryset(self):
+        qs = super().get_queryset().select_related("project")
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(project__owner=self.request.user)
 
-class TaskDetailView(DetailView):
+
+class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
     template_name = "core/task_detail.html"
     context_object_name = "task"
+
+    def get_queryset(self):
+        qs = super().get_queryset().select_related("project")
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(project__owner=self.request.user)
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
@@ -53,12 +66,17 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     fields = ["project", "title", "description", "assigned_to", "tags", "status"]
     success_url = reverse_lazy("task_list")
 
-    def get_initial(self):
-        initial = super().get_initial()
-        project_id = self.request.GET.get("project")
-        if project_id:
-            initial["project"] = project_id
-        return initial
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if not self.request.user.is_superuser:
+            form.fields["project"].queryset = Project.objects.filter(owner=self.request.user)
+        return form
+
+    def form_valid(self, form):
+        # Block creating a task inside someone else's project
+        if (not self.request.user.is_superuser) and form.instance.project.owner != self.request.user:
+            raise PermissionDenied("Not allowed.")
+        return super().form_valid(form)
 
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
@@ -67,23 +85,53 @@ class TaskUpdateView(LoginRequiredMixin, UpdateView):
     fields = ["project", "title", "description", "assigned_to", "tags", "status"]
     success_url = reverse_lazy("task_list")
 
+    def get_queryset(self):
+        qs = super().get_queryset().select_related("project")
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(project__owner=self.request.user)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if not self.request.user.is_superuser:
+            form.fields["project"].queryset = Project.objects.filter(owner=self.request.user)
+        return form
+
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = "core/task_confirm_delete.html"
     success_url = reverse_lazy("task_list")
 
-class ProjectListView(ListView):
+    def get_queryset(self):
+        qs = super().get_queryset().select_related("project")
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(project__owner=self.request.user)
+
+class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
     template_name = "core/project_list.html"
     context_object_name = "projects"
     ordering = ["-created_at"]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(owner=self.request.user)
 
-class ProjectDetailView(DetailView):
+
+class ProjectDetailView(LoginRequiredMixin, DetailView):
     model = Project
     template_name = "core/project_detail.html"
     context_object_name = "project"
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(owner=self.request.user)
 
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
@@ -103,8 +151,20 @@ class ProjectUpdateView(LoginRequiredMixin, UpdateView):
     fields = ["name"]
     success_url = reverse_lazy("project_list")
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(owner=self.request.user)
+
 
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
     template_name = "core/project_confirm_delete.html"
     success_url = reverse_lazy("project_list")
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.user.is_superuser:
+            return qs
+        return qs.filter(owner=self.request.user)
