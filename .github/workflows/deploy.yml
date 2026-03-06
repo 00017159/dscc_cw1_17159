@@ -35,8 +35,8 @@ jobs:
           script: |
             set -e
             cd ~/dscc_cw1_17159
-            docker-compose pull web || docker-compose pull web
-            docker-compose up -d --no-deps web || docker-compose up -d --no-deps web
-            docker-compose exec -T web python manage.py migrate || docker-compose exec -T web python manage.py migrate
-            docker-compose exec -T web python manage.py collectstatic --noinput || docker-compose exec -T web python manage.py collectstatic --noinput
-            docker-image prune -af || true
+            docker compose pull web
+            docker compose up -d --no-deps web
+            docker compose exec -T web python manage.py migrate
+            docker compose exec -T web python manage.py collectstatic --noinput
+            docker image prune -af || true
