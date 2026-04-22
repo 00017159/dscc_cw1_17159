@@ -12,7 +12,7 @@ services:
       - appnet
 
   web:
-    image: shoh0804/dscc17159-web:latest
+    image: ${WEB_IMAGE:-shoh0804/dscc17159-web:latest}
     env_file: .env
     depends_on:
       - db

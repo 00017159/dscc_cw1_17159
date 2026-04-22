@@ -5,6 +5,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+env:
+  IMAGE_NAME: shoh0804/dscc17159-web:latest
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -24,7 +27,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/dscc17159-web:latest
+          tags: ${{ env.IMAGE_NAME }}
 
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
