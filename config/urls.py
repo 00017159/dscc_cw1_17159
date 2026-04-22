@@ -14,8 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path, re_path
+from django.views.static import serve
 from core.views import home
 
 urlpatterns = [
@@ -24,3 +26,19 @@ urlpatterns = [
     path("", home, name="home"),
     path("", include("core.urls")),
 ]
+
+# Allow local development with DEBUG=False by serving static/media from Django.
+# In production, nginx should continue serving these paths instead.
+if not settings.DEBUG:
+    urlpatterns += [
+        re_path(
+            r"^static/(?P<path>.*)$",
+            serve,
+            {"document_root": settings.STATICFILES_DIRS[0]},
+        ),
+        re_path(
+            r"^media/(?P<path>.*)$",
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]
